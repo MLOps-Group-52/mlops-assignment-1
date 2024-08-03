@@ -28,6 +28,6 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f'Model accuracy: {accuracy}')
 
 # Serialize the model to a file
-model_filename = 'decision_tree_model.joblib'
+model_filename = 'model.joblib'
 joblib.dump(model, model_filename)
 print(f'Model saved to {model_filename}')

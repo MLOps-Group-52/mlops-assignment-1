@@ -30,3 +30,9 @@ jobs:
       - name: Build the Model
         run: |
           python Model/model_training.py
+
+      - name: Upload model as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: model-artifact
+          path: model.joblib
