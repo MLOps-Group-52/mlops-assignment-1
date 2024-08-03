@@ -1,0 +1,15 @@
+# Basic dependencies
+flask==2.3.2
+requests==2.31.0
+
+# Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+
+# Linting and code style
+flake8==6.1.0
+black==23.3.0
+
+# Data processing
+pandas==2.0.3
+numpy==1.24.4
