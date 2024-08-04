@@ -56,6 +56,17 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
+      - name: Build and push image
+        run: |
+          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/app:${{ github.sha }}
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/app:${{ github.sha }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: mlops-assignment-1
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/app:${{ github.sha }}    
+
       - name: Upload model as artifact
         uses: actions/upload-artifact@v3
         with:
