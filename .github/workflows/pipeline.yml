@@ -42,7 +42,7 @@ jobs:
           python model_training.py
 
       - name: Build Docker Image
-        run: docker build -t Assignment-group-52:latest .
+        run: docker build -t assignment-group-52:latest .
       
 
       - name: Upload model as artifact
