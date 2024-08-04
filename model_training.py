@@ -33,7 +33,7 @@ def train_and_save_model():
     print(f'Model accuracy: {accuracy:.2f}')
 
     # Serialize the model to a file
-    model_filename = 'model.joblib'
+    model_filename = 'Models/model.joblib'
     joblib.dump(model, model_filename)
     print(f'Model saved to {model_filename}')
 
