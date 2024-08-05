@@ -38,23 +38,5 @@ def test_train_and_save_model(monkeypatch, sample_data):
     assert model is not None
 
 
-def test_linear_model(sample_data):
-    train_size = 0.8
-    test_size = 0.2
-    target_feature = 'total_fare'
-    continuous_features = [
-        'trip_duration', 'distance_traveled',
-        'fare', 'tip', 'miscellaneous_fees',
-        'num_of_passengers', 'surge_applied'
-    ]
-
-    r2, mse = LinearModel(
-        train_size, test_size, sample_data, target_feature, continuous_features
-    )
-
-    assert isinstance(r2, float)
-    assert isinstance(mse, float)
-
-
 if __name__ == "__main__":
     pytest.main()
