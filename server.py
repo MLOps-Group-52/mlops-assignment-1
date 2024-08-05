@@ -1,82 +1,97 @@
-
-
-
-# The code snippet importing necessary modules and libraries 
+# Import necessary modules and libraries
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pandas as pd
-# `from flasgger import Swagger` is importing the Swagger module from the Flasgger library. Swagger is
-# a tool that helps in documenting and visualizing APIs. In this code snippet, it is being used to
-# generate API documentation for the Flask application.
+import numpy as np
+import joblib
 from flasgger import Swagger
 
-# `app = Flask(__name__)` is creating a Flask application instance. 
+# Create a Flask application instance
 app = Flask(__name__)
 
-# `swagger = Swagger(app)` is initializing the Swagger module with the Flask application instance
-# `app`. This line of code sets up Swagger to generate API documentation for the Flask application.
+# Initialize Swagger for API documentation
 swagger = Swagger(app)
 
-# `CORS(app)` is enabling Cross-Origin Resource Sharing (CORS) for the Flask application instance
+# Enable Cross-Origin Resource Sharing (CORS)
 CORS(app)
 
-# The `add_relationship` function in this Python code snippet adds a relationship between two entities
-# to a knowledge graph.
-# :return: The `add_relationship` function returns a JSON response with a success message if the
-# relationship between Entity1 and Entity2 is added successfully to the knowledge graph. If there are
-# any issues such as an empty request body or invalid data, appropriate error messages are returned
-# with status codes 400 or 500.
+# Load the trained model
+model = joblib.load('Models/model.joblib')
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    
-    #swagger documentation start
     """
-    Adds the  Relationship between Entity1 and Entity2  to the knowledge Graph.
+    Predicts the Taxi fare.
     ---
     parameters:
-    -   name: body
-        in: body
-        required: true
-        schema:
-            type: object
-            properties:
-                entity1:
-                    type: string
-                    example: Advocate John
-                entity2:
-                    type: string
-                    example: Case Number 147/2023
-                Relationship:
-                    type: string
-                    example: Filed
+    - name: body
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          trip_duration:
+            type: number
+            example: 2
+          distance_traveled:
+            type: number
+            example: 10
+          num_of_passengers:
+            type: number
+            example: 1
+          tip:
+            type: number
+            example: 20.2
+          miscellaneous_fees:
+            type: number
+            example: 20.2
+          fare:
+            type: number
+            example: 20.2
+          surge_applied:
+            type: boolean
+            example: true
     responses:
-        200:
-            description: Returns a successful message.
-        400:
-            description: Bad Request if data is empty or invalid
-        500:
-            description: Internal issue.
+      200:
+        description: Returns the predicted fare.
+      400:
+        description: Bad request if data is empty or invalid.
+      500:
+        description: Internal server error.
     """
-    #swagger documentation end
     try:
-    # This of code in the Flask application that is extracting JSON data
-    # from the incoming request. When a client sends a POST request to the `/addRelation`,
-    # endpoints with JSON data in the request body, `request.json` is
-    # used to access this JSON data within the Flask route function.
+        # Extract JSON data from the request
         data = request.json
-        
-        # Data validation
+
+        # Validate data
         if not data:
             return jsonify(error="Empty request body"), 400
-    
-    # The exception handling to handle the exception.
+
+        # Extract features from request
+        features = [
+            data.get('trip_duration'),
+            data.get('distance_traveled'),
+            data.get('fare'),
+            data.get('tip'),
+            data.get('miscellaneous_fees'),
+            data.get('num_of_passengers'),
+            data.get('surge_applied')
+        ]
+
+        # Check if all required features are provided
+        if None in features:
+            return jsonify(error="Missing data in request"), 400
+
+        # Convert features to numpy array for prediction
+        features_array = np.array([features])
+
+        # Make prediction
+        prediction = model.predict(features_array)[0]
+        return jsonify(prediction=prediction)
+
     except Exception as e:
-        return jsonify(error="Internal Exception Occurred"), 500
-    
-    # Return successful message with status code 200
-    return jsonify({'message': 'Relationship added successfully'}), 200
+        return jsonify(error=f"Internal Exception Occurred: {str(e)}"), 500
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-    
