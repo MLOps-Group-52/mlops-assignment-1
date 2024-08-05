@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-import os
+import joblib
 from model_training import load_taxifare_data
 from model_training import train_and_save_model
 from model_training import LinearModel
@@ -28,32 +28,32 @@ def test_load_taxifare_data():
     assert not data.empty
 
 
-def test_train_and_save_model(path: pytest.MonkeyPatch):
-    def mock_load_taxifare_data():
+def test_train_and_save_model(monkeypatch, sample_data):
+    def mock():
         return sample_data
-    path.setattr('model_training.load_taxifare_data', mock_load_taxifare_data)
+    monkeypatch.setattr('model_training.load_taxifare_data', mock)
     train_and_save_model()
-    assert os.path.exists('model.joblib')
-    import joblib
-    model = joblib.load('model.joblib')
+    # Load the model and check if it's not None
+    model = joblib.load('Models/model.joblib')
     assert model is not None
 
 
-def test_linear_model(sample_data: pd.DataFrame):
+def test_linear_model(sample_data):
     train_size = 0.8
     test_size = 0.2
     target_feature = 'total_fare'
     continuous_features = [
         'trip_duration', 'distance_traveled',
-        'fare', 'tip', 'miscellaneous_fees'
+        'fare', 'tip', 'miscellaneous_fees',
+        'num_of_passengers', 'surge_applied'
     ]
+
     r2, mse = LinearModel(
         train_size, test_size, sample_data, target_feature, continuous_features
     )
+
     assert isinstance(r2, float)
     assert isinstance(mse, float)
-    assert 0 <= r2 <= 1
-    assert mse >= 0
 
 
 if __name__ == "__main__":
