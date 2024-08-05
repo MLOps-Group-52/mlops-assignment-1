@@ -44,7 +44,7 @@ def predict():
             example: 20.2
           miscellaneous_fees:
             type: number
-            example: 20.2
+            example: 23.2
           fare:
             type: number
             example: 20.2
