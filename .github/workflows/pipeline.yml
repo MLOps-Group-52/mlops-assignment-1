@@ -64,7 +64,7 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: mlops-assignment-1
+          app-name: mlopsAssignment
           images: ${{ secrets.ACR_LOGIN_SERVER }}/app:${{ github.sha }}    
 
       - name: Upload model as artifact
